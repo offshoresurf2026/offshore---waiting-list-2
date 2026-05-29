@@ -717,11 +717,14 @@ body {
     </script>
 
     <script type="text/babel" data-presets="env,react">
-/* Wired to Brevo (sibforms.com) for live signup capture with double opt-in from offshore-surf.com */
+/* Wired to the real Brevo subscription form endpoint (sibforms.com).
+   Your custom form posts the email invisibly to Brevo with the exact fields
+   Brevo expects (EMAIL, the email_address_check honeypot, and locale). Brevo
+   then sends the confirmation/welcome email and adds the contact. */
 
 const { useState, useEffect, useRef } = React;
 
-const BREVO_FORM_ENDPOINT = 'https://bb7a6d1c.sibforms.com/serve/MUIFAG9m_TP2Y8IGBAnPQnSo2NrBSwAa7SfhQe6HtC7EFRn9q70UUzLhLLys1G8NLAZ6fJcrF3ebIKftmXycV_vuqXvW3oWvm0DUUvv4x1tR2reT3268tco1t9qmoawvWL-kaWN_s7r9lv8jCDn7CEvB-NJmxkVhJqZJWuGI_j1zROBfgFR_XZ0x3nVIxSarYCNUci4l4llD0xQxNA==';
+const BREVO_FORM_ENDPOINT = 'https://bb7a6d1c.sibforms.com/serve/MUIFAIUkIQpBKBd7sXm0Nkp6j5ILF6Bd1JsVV0HhgQF4TS_ZTKdp1Ri37gjb9Bdwm-tSvrfZ2LQHjkhuZHbqUcw21d1wQoWK10uaJvcbH_7NMk2deRJDpU58tyQh7H0gT-Q-drtfZxc2uQzGmQiXdV2MwOjV39J9DXSoHMIutaBjFE5ml22ofSieLStrqXsr5t2XNyjb-b0QGT9dOw==';
 
 // ─── signup handler ────────────────────────────────────────────────────────
 async function joinWaitlist(_prev, formData) {
@@ -730,10 +733,10 @@ async function joinWaitlist(_prev, formData) {
     return { status: 'error', message: "Hmm, that doesn't look right." };
   }
   try {
-    // Brevo's sibforms endpoint expects multipart/form-data with EMAIL, the
-    // honeypot field (`email_address_check`), and `locale`. CORS is not exposed
-    // on the public submission endpoint, so we fire-and-forget with no-cors
-    // and trust the submission went through if the network request didn't fail.
+    // Brevo's serve endpoint expects multipart/form-data with EMAIL, the
+    // honeypot field (email_address_check, left empty), and locale. The
+    // endpoint doesn't expose CORS headers, so we fire with no-cors — we can't
+    // read the response, but the submission is recorded by Brevo.
     const body = new FormData();
     body.append('EMAIL', email);
     body.append('email_address_check', '');
