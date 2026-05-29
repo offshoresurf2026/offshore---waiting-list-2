@@ -29,6 +29,7 @@
   --ocean:        #2E7BB5;
   --ocean-dark:   #1A4A6B;
   --ocean-light:  #C8D8E8;
+  --orange:       #C65A2C;
   --sand:         #D4B896;
   --reef:         #1D9E75;
   --danger:       #E24B4A;
@@ -140,7 +141,7 @@ body {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--ocean);
+  background: var(--orange);
   flex: 0 0 auto;
 }
 
@@ -157,7 +158,7 @@ body {
   white-space: nowrap;
 }
 .eyebrow-star {
-  color: var(--ocean);
+  color: var(--orange);
   font-size: 11px;
   line-height: 1;
 }
@@ -194,6 +195,13 @@ body {
   line-height: 1.02;
   letter-spacing: 0.005em;
   color: var(--black);
+  text-transform: uppercase;
+}
+
+.subhead-link {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
 }
 
 .headline-word {
@@ -203,7 +211,7 @@ body {
 }
 
 .headline-em {
-  color: var(--ocean);
+  color: var(--orange);
 }
 
 .subhead {
@@ -285,7 +293,7 @@ body {
 }
 .join-pitch strong {
   font-weight: 700;
-  color: var(--ocean-dark);
+  color: var(--orange);
 }
 
 /* Form overrides inside the join column — sits on cream, hairline only */
@@ -345,7 +353,7 @@ body {
   letter-spacing: -0.005em;
 }
 .join-perk-mark {
-  color: var(--ocean);
+  color: var(--orange);
   font-size: 10.5px;
   flex: 0 0 auto;
   transform: translateY(-1px);
@@ -475,7 +483,7 @@ body {
   font-weight: 600;
   letter-spacing: 0.16em;
   color: #FFFFFF;
-  background: var(--ocean);
+  background: var(--orange);
   padding: 4px 10px;
   border-radius: 3px;
   text-transform: uppercase;
@@ -495,6 +503,7 @@ body {
   letter-spacing: 0.005em;
   color: var(--black);
   line-height: 1.2;
+  text-transform: uppercase;
 }
 
 .pillar-body {
@@ -787,7 +796,7 @@ function WaitlistForm() {
         {isError ? (
           <span className="error-msg">{state.message}</span>
         ) : isSuccess ? (
-          <span className="success-msg">Check your inbox to confirm — it's coming from offshore-surf.com.</span>
+          <span className="success-msg">You're in. We'll email you when the beta opens.</span>
         ) : (
           <span>Unsubscribe anytime · No spam, ever</span>
         )}
@@ -855,33 +864,27 @@ function LandingAnimations() {
 }
 
 // ─── components/landing-card.tsx ───────────────────────────────────────────
-const HEADLINE_LINE_1 = ['The', 'forecast', 'is', 'solved.'];
-const HEADLINE_LINE_2 = ['The', 'lineup', 'isn\u2019t.'];
+const HEADLINE_LINE_1 = ['Find', 'your', 'wave.'];
+const HEADLINE_LINE_2 = ['Surf', 'smarter.'];
 
 const PILLARS = [
   {
     index: '01',
-    title: 'Level-matched everything',
+    title: 'Every break, one map',
     body:
-      'Recommendations tuned to your level, your board, your stance. No more "great for all" — only what fits you.',
+      'Discover spots worldwide, mapped to your level. Every break on Earth, filtered for you.',
   },
   {
     index: '02',
-    title: 'Sessions in surfer context',
+    title: 'Track your surf',
     body:
-      'Every paddle-out shows level, board, and stance badges. You read a session the way you read a lineup.',
+      'Log your sessions and get spot recommendations based on your level, your board, your stance.',
   },
   {
     index: '03',
-    title: 'After the surf',
+    title: 'Find your next wave',
     body:
-      'The café for the post-session coffee, the lunch spot, the gear shop. Mapped to every spot, not an afterthought.',
-  },
-  {
-    index: '04',
-    title: 'Surfer gravity',
-    body:
-      'See who you follow surfed this spot this week. Real social signal — not algorithmic conditions.',
+      'From beginner to pro, discover waves that actually fit you. No more "great for all."',
   },
 ];
 
@@ -932,7 +935,7 @@ function LandingCard() {
               ))}
               <br />
               {HEADLINE_LINE_2.map((word, i) => {
-                const isEm = word === 'lineup';
+                const isEm = word === 'smarter.';
                 return (
                   <span className={`headline-word${isEm ? ' headline-em' : ''}`} key={`l2-${i}`}>
                     {word}
@@ -942,8 +945,9 @@ function LandingCard() {
               })}
             </h1>
             <p className="subhead">
-              Offshore is the human layer of surfing — your level, your crew,
-              your spots, your café after. Built for surfers, not for conditions.
+              The surf app that maps every break on Earth. Not every wave is
+              for you. Offshore helps you find the ones that are. Travel
+              smarter. <span className="subhead-link">Surf better.</span>
             </p>
           </div>
 
@@ -955,8 +959,8 @@ function LandingCard() {
             </div>
 
             <p className="join-pitch">
-              The first <strong>500</strong> ride free for a year and shape what
-              ships next. Drop your line below.
+              Offshore is launching soon. The first <strong>500</strong> get
+              early access and a founding member badge inside the app.
             </p>
 
             <WaitlistForm />
@@ -964,22 +968,22 @@ function LandingCard() {
             <ul className="join-perks" aria-label="Founder perks">
               <li>
                 <span className="join-perk-mark" aria-hidden="true">★</span>
-                <span>Founding 500 — first year on us</span>
+                <span>First in the water, private beta access</span>
               </li>
               <li>
                 <span className="join-perk-mark" aria-hidden="true">★</span>
-                <span>Early TestFlight — Q3 &rsquo;26</span>
+                <span>Founding member badge in the app</span>
               </li>
               <li>
                 <span className="join-perk-mark" aria-hidden="true">★</span>
-                <span>Direct line into the build</span>
+                <span>Your feedback shapes what ships next</span>
               </li>
             </ul>
 
             <div className="join-sign">
-              <span>BUILT IN BALI</span>
+              <span>EVERY SPOT</span>
               <span className="join-sign-dot" aria-hidden="true">·</span>
-              <span>SHIPPED WORLDWIDE</span>
+              <span>EVERY SURFER</span>
             </div>
           </aside>
         </main>
@@ -995,22 +999,6 @@ function LandingCard() {
         </section>
 
         <footer className="bottom">
-          <div className="trust">
-            <span className="trust-item">
-              <strong>2,847</strong>
-              <span className="trust-label">surfers waiting</span>
-            </span>
-            <span className="trust-rule" aria-hidden="true" />
-            <span className="trust-item">
-              <strong>38</strong>
-              <span className="trust-label">countries</span>
-            </span>
-            <span className="trust-rule" aria-hidden="true" />
-            <span className="trust-item">
-              <strong>Q3 &rsquo;26</strong>
-              <span className="trust-label">TestFlight</span>
-            </span>
-          </div>
           <div className="index-mark" aria-hidden="true">
             001 / 26
           </div>
