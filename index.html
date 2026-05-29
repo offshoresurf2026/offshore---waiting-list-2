@@ -177,6 +177,39 @@ body {
   line-height: 1;
 }
 
+.top-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+}
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex: 0 0 auto;
+}
+.lang-toggle button {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 4px 7px;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--gray3);
+  text-transform: uppercase;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.lang-toggle button:hover { color: var(--black); }
+.lang-toggle button.active { background: var(--orange); color: #FFFFFF; }
+.lang-toggle .sep { color: var(--line-strong); font-size: 11px; }
+
+@media (max-width: 559px) {
+  .top .eyebrow { display: none; }
+}
+
 .hairline {
   height: 1px;
   margin-top: 22px;
@@ -219,8 +252,7 @@ body {
 }
 
 .headline-word {
-  display: inline-block;
-  white-space: pre;
+  display: block;
   will-change: transform, opacity;
 }
 
@@ -730,7 +762,7 @@ const BREVO_FORM_ENDPOINT = 'https://bb7a6d1c.sibforms.com/serve/MUIFAIUkIQpBKBd
 async function joinWaitlist(_prev, formData) {
   const email = String(formData.get('email') ?? '').trim();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return { status: 'error', message: "Hmm, that doesn't look right." };
+    return { status: 'error', messageKey: 'invalid' };
   }
   try {
     // Brevo's serve endpoint expects multipart/form-data with EMAIL, the
@@ -740,7 +772,7 @@ async function joinWaitlist(_prev, formData) {
     const body = new FormData();
     body.append('EMAIL', email);
     body.append('email_address_check', '');
-    body.append('locale', 'en');
+    body.append('locale', String(formData.get('locale') || 'en'));
     await fetch(BREVO_FORM_ENDPOINT, {
       method: 'POST',
       mode: 'no-cors',
@@ -748,9 +780,80 @@ async function joinWaitlist(_prev, formData) {
     });
     return { status: 'success', email };
   } catch (err) {
-    return { status: 'error', message: "Network hiccup. Try again?" };
+    return { status: 'error', messageKey: 'network' };
   }
 }
+
+// ─── i18n ────────────────────────────────────────────────────────────
+const TRANSLATIONS = {
+  en: {
+    banner: ['VOL. 01', 'LAUNCH ISSUE', 'THE SURFER\u2019S APP', 'EST. 2026', 'WORLDWIDE'],
+    eyebrow: 'THE SURFER\u2019S APP',
+    headline: { line1: 'Find your wave.', l2a: 'Surf ', em: 'smarter.' },
+    subhead: 'The surf app that maps every break on Earth. Not every wave is for you. Offshore helps you find the ones that are. Travel smarter. ',
+    subheadLink: 'Surf better.',
+    waitlist: 'WAITLIST',
+    pitchA: 'Offshore is launching soon. The first ',
+    pitchStrong: '500',
+    pitchB: ' get early access and a founding member badge inside the app.',
+    perks: [
+      'First in the water, private beta access',
+      'Founding member badge in the app',
+      'Your feedback shapes what ships next',
+    ],
+    sign: ['EVERY SPOT', 'EVERY SURFER'],
+    pillars: [
+      { title: 'Every break, one map', body: 'Discover spots worldwide, mapped to your level. Every break on Earth, filtered for you.' },
+      { title: 'Track your surf', body: 'Log your sessions and get spot recommendations based on your level, your board, your stance.' },
+      { title: 'Find your next wave', body: 'From beginner to pro, discover waves that actually fit you. No more "great for all."' },
+    ],
+    form: {
+      placeholder: 'you@example.com',
+      idle: 'Join the lineup',
+      pending: 'Joining\u2026',
+      success: "You're in",
+      metaIdle: 'Unsubscribe anytime \u00b7 No spam, ever',
+      successMsg: "You're in. We'll email you when the beta opens.",
+      errors: { invalid: "Hmm, that doesn't look right.", network: 'Network hiccup. Try again?' },
+      aria: 'Email address',
+    },
+  },
+  es: {
+    banner: ['VOL. 01', 'EDICI\u00d3N DE LANZAMIENTO', 'LA APP DEL SURFISTA', 'EST. 2026', 'EN TODO EL MUNDO'],
+    eyebrow: 'LA APP DEL SURFISTA',
+    headline: { line1: 'Encuentra tu ola.', l2a: 'Surfea ', em: 'mejor.' },
+    subhead: 'La app de surf que mapea cada spot del planeta. No toda ola es para ti. Offshore te ayuda a encontrar las que s\u00ed. Viaja mejor. ',
+    subheadLink: 'Surfea mejor.',
+    waitlist: 'LISTA DE ESPERA',
+    pitchA: 'Offshore se lanza pronto. Los primeros ',
+    pitchStrong: '500',
+    pitchB: ' obtienen acceso anticipado y una insignia de miembro fundador dentro de la app.',
+    perks: [
+      'Primero en el agua, acceso a la beta privada',
+      'Insignia de miembro fundador en la app',
+      'Tu feedback define lo que viene',
+    ],
+    sign: ['CADA SPOT', 'CADA SURFISTA'],
+    pillars: [
+      { title: 'Cada spot, un solo mapa', body: 'Descubre spots de todo el mundo, seg\u00fan tu nivel. Cada ola del planeta, filtrada para ti.' },
+      { title: 'Registra tu surf', body: 'Guarda tus sesiones y recibe recomendaciones seg\u00fan tu nivel, tu tabla y tu postura.' },
+      { title: 'Encuentra tu pr\u00f3xima ola', body: 'De principiante a pro, descubre olas que de verdad se ajustan a ti. Sin m\u00e1s "para todos".' },
+    ],
+    form: {
+      placeholder: 'tu@ejemplo.com',
+      idle: '\u00danete a la lista',
+      pending: 'Enviando\u2026',
+      success: '\u00a1Listo!',
+      metaIdle: 'Cancela cuando quieras \u00b7 Sin spam, nunca',
+      successMsg: 'Est\u00e1s dentro. Te avisaremos cuando abra la beta.',
+      errors: { invalid: 'Mmm, eso no parece correcto.', network: 'Fallo de red. \u00bfProbar de nuevo?' },
+      aria: 'Correo electr\u00f3nico',
+    },
+  },
+};
+
+const LangContext = React.createContext(null);
+const useT = () => React.useContext(LangContext);
 
 // useActionState polyfill that matches the React 19 signature we use.
 function useActionStateLocal(action, initial) {
@@ -772,6 +875,7 @@ function useActionStateLocal(action, initial) {
 const INITIAL = { status: 'idle' };
 
 function WaitlistForm() {
+  const { t, lang } = useT();
   const [state, formAction, isPending] = useActionStateLocal(joinWaitlist, INITIAL);
   const [email, setEmail] = useState('');
 
@@ -782,6 +886,7 @@ function WaitlistForm() {
   const onSubmit = (e) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
+    fd.append('locale', lang);
     formAction(fd);
   };
 
@@ -792,17 +897,17 @@ function WaitlistForm() {
           name="email"
           type="email"
           className="email-input"
-          placeholder="you@example.com"
+          placeholder={t.form.placeholder}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           disabled={isPending || isSuccess}
-          aria-label="Email address"
+          aria-label={t.form.aria}
           autoComplete="email"
           spellCheck={false}
         />
         <button type="submit" className="cta" disabled={isPending || isSuccess}>
           <span className="cta-label">
-            {isSuccess ? "You're in" : isPending ? 'Joining…' : 'Join the lineup'}
+            {isSuccess ? t.form.success : isPending ? t.form.pending : t.form.idle}
           </span>
           <span className="cta-arrow" aria-hidden="true">
             {isSuccess ? '✓' : '→'}
@@ -811,11 +916,11 @@ function WaitlistForm() {
       </div>
       <div className="form-meta">
         {isError ? (
-          <span className="error-msg">{state.message}</span>
+          <span className="error-msg">{t.form.errors[state.messageKey] || t.form.errors.network}</span>
         ) : isSuccess ? (
-          <span className="success-msg">You're in. We'll email you when the beta opens.</span>
+          <span className="success-msg">{t.form.successMsg}</span>
         ) : (
-          <span>Unsubscribe anytime · No spam, ever</span>
+          <span>{t.form.metaIdle}</span>
         )}
       </div>
     </form>
@@ -881,31 +986,33 @@ function LandingAnimations() {
 }
 
 // ─── components/landing-card.tsx ───────────────────────────────────────────
-const HEADLINE_LINE_1 = ['Find', 'your', 'wave.'];
-const HEADLINE_LINE_2 = ['Surf', 'smarter.'];
+function LangToggle() {
+  const { lang, setLang } = useT();
+  return (
+    <div className="lang-toggle" role="group" aria-label="Language / Idioma">
+      <button
+        type="button"
+        className={lang === 'en' ? 'active' : ''}
+        onClick={() => setLang('en')}
+        aria-pressed={lang === 'en'}
+      >
+        EN
+      </button>
+      <span className="sep" aria-hidden="true">/</span>
+      <button
+        type="button"
+        className={lang === 'es' ? 'active' : ''}
+        onClick={() => setLang('es')}
+        aria-pressed={lang === 'es'}
+      >
+        ES
+      </button>
+    </div>
+  );
+}
 
-const PILLARS = [
-  {
-    index: '01',
-    title: 'Every break, one map',
-    body:
-      'Discover spots worldwide, mapped to your level. Every break on Earth, filtered for you.',
-  },
-  {
-    index: '02',
-    title: 'Track your surf',
-    body:
-      'Log your sessions and get spot recommendations based on your level, your board, your stance.',
-  },
-  {
-    index: '03',
-    title: 'Find your next wave',
-    body:
-      'From beginner to pro, discover waves that actually fit you. No more "great for all."',
-  },
-];
-
-function LandingCard() {
+function LandingContent() {
+  const { t } = useT();
   return (
     <div className="landing-card">
       <LandingAnimations />
@@ -913,120 +1020,4 @@ function LandingCard() {
       <div className="issue-banner" role="presentation">
         <div className="issue-banner-inner">
           <span className="issue-banner-star" aria-hidden="true">★</span>
-          <span>VOL. 01</span>
-          <span className="issue-banner-sep" aria-hidden="true">·</span>
-          <span>LAUNCH ISSUE</span>
-          <span className="issue-banner-sep" aria-hidden="true">·</span>
-          <span>THE SURFER&rsquo;S APP</span>
-          <span className="issue-banner-sep" aria-hidden="true">·</span>
-          <span>EST. 2026</span>
-          <span className="issue-banner-sep" aria-hidden="true">·</span>
-          <span>WORLDWIDE</span>
-          <span className="issue-banner-star" aria-hidden="true">★</span>
-        </div>
-      </div>
-
-      <div className="content">
-        <header className="top">
-          <div className="wordmark" aria-label="Offshore">
-            <span className="wordmark-dot" aria-hidden="true" />
-            <span className="wordmark-text">Offshore</span>
-          </div>
-          <div className="eyebrow">
-            <span className="eyebrow-star" aria-hidden="true">★</span>
-            <span>THE SURFER&rsquo;S APP</span>
-            <span className="eyebrow-star" aria-hidden="true">★</span>
-          </div>
-        </header>
-
-        <div className="hairline" aria-hidden="true" />
-
-        <main className="stage">
-          <div className="hero">
-            <h1 className="headline">
-              {HEADLINE_LINE_1.map((word, i) => (
-                <span className="headline-word" key={`l1-${i}`}>
-                  {word}
-                  {i < HEADLINE_LINE_1.length - 1 ? ' ' : ''}
-                </span>
-              ))}
-              <br />
-              {HEADLINE_LINE_2.map((word, i) => {
-                const isEm = word === 'smarter.';
-                return (
-                  <span className={`headline-word${isEm ? ' headline-em' : ''}`} key={`l2-${i}`}>
-                    {word}
-                    {i < HEADLINE_LINE_2.length - 1 ? ' ' : ''}
-                  </span>
-                );
-              })}
-            </h1>
-            <p className="subhead">
-              The surf app that maps every break on Earth. Not every wave is
-              for you. Offshore helps you find the ones that are. Travel
-              smarter. <span className="subhead-link">Surf better.</span>
-            </p>
-          </div>
-
-          <aside className="join-column" aria-label="Join the waitlist">
-            <div className="join-stamp">
-              <span className="join-stamp-no">№ 001</span>
-              <span className="join-stamp-bar" aria-hidden="true" />
-              <span className="join-stamp-label">WAITLIST</span>
-            </div>
-
-            <p className="join-pitch">
-              Offshore is launching soon. The first <strong>500</strong> get
-              early access and a founding member badge inside the app.
-            </p>
-
-            <WaitlistForm />
-
-            <ul className="join-perks" aria-label="Founder perks">
-              <li>
-                <span className="join-perk-mark" aria-hidden="true">★</span>
-                <span>First in the water, private beta access</span>
-              </li>
-              <li>
-                <span className="join-perk-mark" aria-hidden="true">★</span>
-                <span>Founding member badge in the app</span>
-              </li>
-              <li>
-                <span className="join-perk-mark" aria-hidden="true">★</span>
-                <span>Your feedback shapes what ships next</span>
-              </li>
-            </ul>
-
-            <div className="join-sign">
-              <span>EVERY SPOT</span>
-              <span className="join-sign-dot" aria-hidden="true">·</span>
-              <span>EVERY SURFER</span>
-            </div>
-          </aside>
-        </main>
-
-        <section className="pillars" aria-label="What makes Offshore different">
-          {PILLARS.map((p) => (
-            <article className="pillar" key={p.index}>
-              <span className="pillar-tag">N<sup>o</sup> {p.index}</span>
-              <h2 className="pillar-title">{p.title}</h2>
-              <p className="pillar-body">{p.body}</p>
-            </article>
-          ))}
-        </section>
-
-        <footer className="bottom">
-          <div className="index-mark" aria-hidden="true">
-            001 / 26
-          </div>
-        </footer>
-      </div>
-    </div>
-  );
-}
-
-ReactDOM.createRoot(document.getElementById('root')).render(<LandingCard />);
-
-</script>
-  </body>
-</html>
+          {t.banner.map((b, i) => 
